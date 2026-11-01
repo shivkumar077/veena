@@ -14,10 +14,11 @@ test('opens the illustrated VEENA welcome with its local scene', async ({
   await page.goto('/');
 
   await expect(page).toHaveTitle(/VEENA — Beyond What You Hear/);
+  const welcome = page.getByRole('region', { name: 'VEENA welcome' });
   await expect(page.getByRole('heading', { name: 'VEENA' })).toBeVisible();
-  await expect(page.getByText('वीणा', { exact: true })).toBeVisible();
+  await expect(welcome.getByText('वीणा', { exact: true })).toBeVisible();
   await expect(
-    page.getByText('Beyond What You Hear.', { exact: true }),
+    welcome.getByText('Beyond What You Hear.', { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Scroll down to explore' }),
@@ -457,4 +458,228 @@ test('uses the atmospheric fallback if the illustrated scene fails', async ({
     /welcome-screen--fallback/,
   );
   await expect(page.getByRole('heading', { name: 'VEENA' })).toBeVisible();
+});
+
+test('enters the workspace through the blossom transition and continues as a guest', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Scroll down to explore' }).click();
+
+  const main = page.locator('#main');
+  await expect(main).toHaveAttribute('data-navigation-state', 'idle', {
+    timeout: 5000,
+  });
+  await expect(page).toHaveURL(/#explore$/);
+  await expect(
+    page.getByRole('region', { name: 'VEENA listening workspace' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Choose how you listen' }),
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Continue as guest' }).click();
+  await expect(page.getByRole('status')).toHaveText('Guest session');
+  await expect(
+    page.getByRole('heading', { name: 'A place for the next song.' }),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Listening' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+
+  await page.getByRole('button', { name: 'Lyrics', exact: true }).click();
+  await expect(page.getByTestId('lyrics-placeholder')).toBeVisible();
+  await page.getByRole('button', { name: 'Sources', exact: true }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Choose how you listen' }),
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Welcome' }).click();
+  await expect(main).toHaveAttribute('data-transition-count', '2');
+  await expect(main).toHaveAttribute('data-navigation-direction', 'backward');
+  await expect(main).toHaveAttribute('data-navigation-state', 'idle', {
+    timeout: 5000,
+  });
+  await expect(page).not.toHaveURL(/#explore$/);
+});
+
+test('the keyboard-accessible skip link enters the workspace through the blossom transition', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const skipLink = page.getByRole('link', {
+    name: 'Skip to the next section',
+  });
+
+  await page.keyboard.press('Tab');
+  await expect(skipLink).toBeFocused();
+  await page.keyboard.press('Enter');
+
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-transition-count',
+    '1',
+  );
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-navigation-state',
+    'idle',
+    { timeout: 5000 },
+  );
+  await expect(
+    page.getByRole('region', { name: 'VEENA listening workspace' }),
+  ).toBeVisible();
+});
+
+test('provider source selection never represents an unimplemented connection as active', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Scroll down to explore' }).click();
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-navigation-state',
+    'idle',
+    { timeout: 5000 },
+  );
+
+  await page.getByRole('button', { name: 'Select Apple Music' }).click();
+  await expect(
+    page.getByRole('button', { name: 'Selected: Apple Music' }),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('source-card-apple-music')).toContainText(
+    'Not connected',
+  );
+  await expect(page.getByRole('status')).toContainText(
+    'no access was requested',
+  );
+
+  await page.getByRole('button', { name: 'Select YouTube Music' }).click();
+  await expect(page.getByTestId('source-card-youtube-music')).toContainText(
+    'Not connected',
+  );
+  await expect(
+    page.locator('input[type="email"], input[type="password"]'),
+  ).toHaveCount(0);
+});
+
+test('local audio selection stays on-device and does not start playback', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Scroll down to explore' }).click();
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-navigation-state',
+    'idle',
+    { timeout: 5000 },
+  );
+
+  await page.getByLabel('Choose a local audio file').setInputFiles({
+    name: 'quiet-morning.mp3',
+    mimeType: 'audio/mpeg',
+    buffer: Buffer.from('local fixture only'),
+  });
+
+  await expect(
+    page.getByTestId('source-card-local-audio').getByRole('status'),
+  ).toContainText('quiet-morning.mp3');
+  await expect(page.locator('.workspace-notice')).toContainText(
+    'will not be uploaded or played',
+  );
+  await expect(page.locator('audio, video')).toHaveCount(0);
+});
+
+test('workspace remains usable without horizontal overflow at supported widths', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Scroll down to explore' }).click();
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-navigation-state',
+    'idle',
+    { timeout: 5000 },
+  );
+
+  for (const width of [320, 375, 430, 768, 1024, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    const dimensions = await page.evaluate(() => {
+      const frame = document.querySelector('.workspace-frame');
+      const bounds = frame?.getBoundingClientRect();
+      return {
+        viewportWidth: window.innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        frameLeft: bounds?.left ?? 0,
+        frameRight: bounds?.right ?? 0,
+      };
+    });
+
+    expect(dimensions.documentWidth).toBeLessThanOrEqual(width);
+    expect(dimensions.frameLeft).toBeGreaterThanOrEqual(0);
+    expect(dimensions.frameRight).toBeLessThanOrEqual(width);
+    await expect(
+      page.getByRole('navigation', { name: 'Workspace areas' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Continue as guest' }),
+    ).toBeVisible();
+  }
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  const guestAction = await page
+    .getByRole('button', { name: 'Continue as guest' })
+    .boundingBox();
+  expect(guestAction).not.toBeNull();
+  expect(guestAction!.y + guestAction!.height).toBeLessThan(812);
+});
+
+test('keyboard scrolling inside the workspace does not trigger section navigation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Scroll down to explore' }).click();
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-navigation-state',
+    'idle',
+    { timeout: 5000 },
+  );
+
+  const workspaceContent = page.getByRole('region', {
+    name: 'Workspace content',
+  });
+  const firstSource = page.getByTestId('source-card-apple-music');
+  const sourceBounds = await firstSource.boundingBox();
+  if (!sourceBounds) {
+    throw new Error('The first source card must be visible in the workspace.');
+  }
+  await page.mouse.move(
+    sourceBounds.x + sourceBounds.width / 2,
+    sourceBounds.y + sourceBounds.height / 2,
+  );
+  await page.mouse.wheel(0, 160);
+  await expect
+    .poll(() => workspaceContent.evaluate((element) => element.scrollTop))
+    .toBeGreaterThan(0);
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-transition-count',
+    '1',
+  );
+
+  await workspaceContent.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  const before = await workspaceContent.evaluate(
+    (element) => element.scrollTop,
+  );
+  expect(before).toBeGreaterThan(0);
+  await workspaceContent.focus();
+  await page.keyboard.press('PageUp');
+
+  await expect
+    .poll(() => workspaceContent.evaluate((element) => element.scrollTop))
+    .toBeLessThan(before);
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-transition-count',
+    '1',
+  );
+  await expect(page).toHaveURL(/#explore$/);
 });

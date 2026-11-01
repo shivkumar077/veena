@@ -1,5 +1,6 @@
 @import './tokens.css';
 @import './welcome.css';
+@import './workspace.css';
 
 @tailwind base;
 @tailwind components;

@@ -4,7 +4,7 @@
 
 VEENA is a premium, immersive visual music experience. Its ambition is to give every song a world of its own: adaptive environments, expressive typography, animated compositions, and lyrics that move with the music. It is being built as an artistic listening space, not a conventional music-player dashboard.
 
-> **Milestones 1–2 — Foundation and cinematic welcome.** The repository establishes the frontend foundation, domain contracts, quality checks, and a responsive, animated welcome landscape. Playback, lyrics services, authentication, and provider integrations are planned—not implemented.
+> **Milestones 1–3 — Foundation, cinematic welcome, and listening workspace.** VEENA is guest-first and does not require an account. Provider authorization, playback, lyrics services, and adaptive visual engines are planned—not implemented.
 
 ## Vision
 
@@ -17,6 +17,7 @@ Listening should feel like entering a place. VEENA explores how color, light, mo
 - **Synchronized lyrics** with clear, readable timing and typography.
 - **Playback across music providers**, behind provider-neutral contracts.
 - **A considered mobile experience**, from compact phones to large displays.
+- **Guest-first access** with no VEENA registration or profile collection.
 
 These are product goals, not claims of currently available playback features.
 
@@ -30,10 +31,10 @@ src/
   components/          Shared interface components
   features/
     welcome/           Landscape, centered brand, petals, and scroll transition
+    workspace/         Guest-first source selection and listening/lyrics areas
     visualization/     Future track-responsive visual experience
     playback/          Future playback experience
     lyrics/            Future synchronized-lyrics experience
-    authentication/    Future authentication experience
     environments/      Future environment experience
   engines/
     playback/          Playback engine contract
@@ -50,7 +51,9 @@ src/
 
 Engine interfaces describe what the application needs; provider interfaces describe what an external music source may offer. Implementations can be added later without coupling the UI to Supabase, LRCLIB, or a specific music provider.
 
-The opening scene is an original, locally hosted vector illustration with separate art direction for portrait and landscape screens. Animated musical notes, ambient lighting, and drifting blossoms bring the scene to life; scrolling lifts and softens the opening art as a brief petal surge bridges into a full-screen continuation. Reduced-motion users get a static scene and no animated petals. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
+The opening scene is an original, locally hosted vector illustration with separate art direction for portrait and landscape screens. Animated musical notes, ambient lighting, and drifting blossoms bring the scene to life; direction-aware navigation carries visitors into the listening workspace. The workspace offers Apple Music, YouTube Music, and local audio as source choices, plus a guest path. Provider choices are not connected, local files are not uploaded or played, and no VEENA account or provider authorization is requested. Listening and lyrics areas are structural placeholders. Reduced-motion users get immediate section navigation and no animated petals. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
+
+VEENA does not use VEENA identity accounts. A future music provider may separately request its own authorization to enable provider-specific features; that authorization is not VEENA registration.
 
 ## Technology
 
@@ -90,10 +93,10 @@ Copy `.env.example` to `.env.local` when local public configuration is needed. V
 
 1. **Foundation and architecture** — complete: frontend scaffold, design tokens, domain and engine contracts, and quality tooling.
 2. **Cinematic welcome and branding** — complete: responsive local landscape, centered bilingual brand, petal motion, reduced-motion behavior, and scroll transition.
-3. **Core listening experience** — playback state and controls, track selection, and provider integration boundaries.
+3. **Responsive listening workspace** — complete: guest-first shell, honest source-selection states, local-file entry point, and listening/lyrics placeholders. Actual playback and provider authorization are not implemented.
 4. **Lyrics and synchronization** — lyrics retrieval, timed-line contracts in use, and accessible lyric presentation.
 5. **Visual composition** — audio-informed compositions and track-responsive environments.
-6. **Account and persistence** — authentication, preferences, and saved listening context.
+6. **Privacy-conscious preferences** — optional local preferences only where useful; no VEENA account or profile.
 7. **Hardening and release** — device/browser validation, performance, and production operations.
 
 Roadmap stages are plans; completion should be reported only after implementation and verification.

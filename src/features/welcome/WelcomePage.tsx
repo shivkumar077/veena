@@ -5,6 +5,7 @@ import {
   useBlossomNavigation,
   type BlossomTransitionFrame,
 } from '../../hooks/useBlossomNavigation';
+import { WorkspacePage } from '../workspace/WorkspacePage';
 import { WelcomeBrand } from './WelcomeBrand';
 import { WelcomeLandscape } from './WelcomeLandscape';
 
@@ -123,6 +124,7 @@ export default function WelcomePage() {
             onError={() => setLandscapeUnavailable(true)}
           />
           <div className="welcome-transition__veil" aria-hidden="true" />
+          <WorkspacePage onReturnToWelcome={() => navigate('backward')} />
         </section>
         <BlossomTransition
           transitionRef={transitionRef}

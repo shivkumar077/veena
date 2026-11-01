@@ -16,3 +16,16 @@ export type {
   VisualMotionProfile,
   VisualPalette,
 } from './visual';
+export type {
+  GuestSession,
+  LocalMusicSourceId,
+  MusicProviderAuthorizationAdapter,
+  MusicSourceAvailability,
+  MusicSourceConnectionStatus,
+  MusicSourceId,
+  MusicSourceOption,
+  MusicSourceSelectionState,
+  ProviderMusicSourceId,
+  WorkspaceArea,
+  WorkspaceNavigationState,
+} from './workspace';

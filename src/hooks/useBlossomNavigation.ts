@@ -504,6 +504,13 @@ export function useBlossomNavigation({
 
       if (
         direction &&
+        canScrollWithinTarget(event.target, direction === 'forward' ? 1 : -1)
+      ) {
+        return;
+      }
+
+      if (
+        direction &&
         findNavigationDirection(direction === 'forward' ? 1 : -1)
       ) {
         event.preventDefault();

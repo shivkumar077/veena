@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import WelcomePage from './WelcomePage';
 
@@ -11,12 +11,16 @@ describe('WelcomePage', () => {
     render(<WelcomePage />);
 
     expect(screen.getByRole('heading', { name: 'VEENA' })).toBeInTheDocument();
-    expect(screen.getByText('वीणा', { exact: true })).toHaveAttribute(
-      'lang',
-      'hi',
-    );
     expect(
-      screen.getByText('Beyond What You Hear.', { exact: true }),
+      within(screen.getByLabelText('VEENA welcome')).getByText('वीणा', {
+        exact: true,
+      }),
+    ).toHaveAttribute('lang', 'hi');
+    expect(
+      within(screen.getByLabelText('VEENA welcome')).getByText(
+        'Beyond What You Hear.',
+        { exact: true },
+      ),
     ).toBeInTheDocument();
     expect(
       screen
@@ -39,6 +43,9 @@ describe('WelcomePage', () => {
     expect(
       screen.getByRole('region', { name: 'Continue exploring VEENA' }),
     ).toHaveAttribute('id', 'explore');
+    expect(
+      screen.getByRole('region', { name: 'VEENA listening workspace' }),
+    ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /enter|discover/i }),
     ).not.toBeInTheDocument();
