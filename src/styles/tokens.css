@@ -1,0 +1,32 @@
+:root {
+  color-scheme: dark;
+
+  --color-midnight: #111722;
+  --color-midnight-soft: #171f2b;
+  --color-gold: #d6bd91;
+  --color-ivory: #ede8de;
+  --color-teal: #344c50;
+  --color-muted: #9da2a4;
+  --color-hairline: rgb(237 232 222 / 14%);
+  --color-focus: #e7c98f;
+
+  --font-heading: 'Space Grotesk', 'Arial', sans-serif;
+  --font-body: 'Inter', 'Arial', sans-serif;
+  --font-editorial: 'Cormorant Garamond', Georgia, serif;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 3rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+  --space-8: 8rem;
+
+  --content-width: 82rem;
+  --page-gutter: clamp(1.25rem, 5.3vw, 6rem);
+  --motion-fast: 180ms;
+  --motion-standard: 320ms;
+  --motion-slow: 800ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
