@@ -7,12 +7,12 @@ export function WelcomeBrand() {
     shouldReduceMotion
       ? {
           initial: false,
-          animate: { opacity: 1, y: 0 },
+          animate: { opacity: 1 },
           transition: { duration: 0 },
         }
       : {
-          initial: { opacity: 0, y: 16 },
-          animate: { opacity: 1, y: 0 },
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
           transition: {
             duration: 1.1,
             delay,

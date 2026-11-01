@@ -50,9 +50,7 @@ src/
 
 Engine interfaces describe what the application needs; provider interfaces describe what an external music source may offer. Implementations can be added later without coupling the UI to Supabase, LRCLIB, or a specific music provider.
 
-The opening landscape is locally hosted, preloaded, and art-directed separately for portrait and landscape screens. A small Canvas 2D layer animates a limited number of petals; reduced-motion users get a static landscape and no animated petals. A scroll link moves into a minimal visual continuation rather than a premature product flow. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
-
-The welcome image is adapted from a Wikimedia Commons photograph. Its creator, source, CC BY-SA 4.0 license, and crop/conversion notes are recorded in [ASSET-CREDITS.md](./ASSET-CREDITS.md).
+The opening scene is an original, locally hosted vector illustration with separate art direction for portrait and landscape screens. Animated musical notes, ambient lighting, and drifting blossoms bring the scene to life; scrolling lifts and softens the opening art as a brief petal surge bridges into a full-screen continuation. Reduced-motion users get a static scene and no animated petals. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
 
 ## Technology
 

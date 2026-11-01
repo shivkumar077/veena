@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="800" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111725"/>
+      <stop offset=".48" stop-color="#28243C"/>
+      <stop offset="1" stop-color="#263D4C"/>
+    </linearGradient>
+    <radialGradient id="moonlight" cx="0" cy="0" r="1" gradientTransform="matrix(0 550 -650 0 1180 220)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9B8C6" stop-opacity=".48"/>
+      <stop offset=".3" stop-color="#A888B2" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#A888B2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="horizon" cx="0" cy="0" r="1" gradientTransform="matrix(0 270 -700 0 820 700)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C58D9C" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#C58D9C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="water" x1="800" y1="740" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#403852"/>
+      <stop offset="1" stop-color="#162932"/>
+    </linearGradient>
+    <linearGradient id="reflection" x1="800" y1="720" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E8B1BE" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#E8B1BE" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="30"/>
+    </filter>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h1600v1000H0z"/>
+  <path fill="url(#moonlight)" d="M0 0h1600v1000H0z"/>
+  <path fill="url(#horizon)" d="M0 300h1600v500H0z"/>
+  <circle cx="1190" cy="205" r="104" fill="#F2D8D5" fill-opacity=".09" filter="url(#soft)"/>
+  <circle cx="1190" cy="205" r="66" fill="#F0DBD7" fill-opacity=".78"/>
+  <circle cx="1215" cy="185" r="66" fill="#28243C" fill-opacity=".66"/>
+
+  <g fill="#F3D8D9" fill-opacity=".74">
+    <circle cx="178" cy="125" r="2"/><circle cx="298" cy="232" r="1.7"/><circle cx="475" cy="105" r="2"/>
+    <circle cx="616" cy="194" r="1.4"/><circle cx="784" cy="120" r="1.8"/><circle cx="941" cy="258" r="1.5"/>
+    <circle cx="1378" cy="112" r="1.7"/><circle cx="1490" cy="293" r="2"/><circle cx="105" cy="355" r="1.5"/>
+    <circle cx="1440" cy="405" r="1.5"/><circle cx="1325" cy="337" r="1.8"/><circle cx="355" cy="344" r="1.6"/>
+  </g>
+  <g fill="#D9B58D" fill-opacity=".65">
+    <path d="m382 181 3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Zm842 113 2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5Z"/>
+  </g>
+
+  <path fill="#202738" d="m0 606 181-145 143 96 151-173 187 154 147-105 174 104 138-165 160 147 130-81 189 150v312H0V606Z"/>
+  <path fill="#263142" fill-opacity=".92" d="m0 673 186-100 121 51 203-117 171 128 161-87 162 89 165-121 129 105 165-88 137 90v377H0V673Z"/>
+  <path fill="#2D394A" fill-opacity=".88" d="M0 747c191-50 330-25 473-64 123-33 206-22 319 4 131 31 246 27 365-8 165-49 290-30 443 22v299H0V747Z"/>
+
+  <path fill="url(#water)" d="M0 739c194-40 352-22 517-47 152-23 258-30 416-3 225 39 418 11 667-31v342H0V739Z"/>
+  <path fill="url(#reflection)" d="M667 713c92-24 184-22 269-4l-69 291H727l-60-287Z"/>
+  <g stroke="#E8C3C2" stroke-linecap="round">
+    <path stroke-opacity=".42" stroke-width="2" d="M743 776h140m-174 37h205m-238 43h269m-300 47h330m-355 42h382"/>
+    <path stroke-opacity=".25" stroke-width="1.4" d="M500 798h103m376 21h124M405 875h125m540 16h161M251 944h204m711-6h150"/>
+  </g>
+  <g fill="#E5B9C1" fill-opacity=".45">
+    <circle cx="158" cy="790" r="2"/><circle cx="1330" cy="824" r="2"/><circle cx="1115" cy="931" r="1.6"/>
+    <circle cx="355" cy="907" r="1.5"/><circle cx="1441" cy="975" r="2"/>
+  </g>
+
+  <g fill="#151B29" fill-opacity=".78">
+    <path d="M0 468c54-21 99-55 140-103 40 56 70 105 112 131 32 19 63 18 98 3v159H0V468Z"/>
+    <path d="M1402 411c47-28 91-75 132-142 31 54 47 97 66 122v269h-198V411Z"/>
+  </g>
+  <g stroke="#B48793" stroke-opacity=".56" stroke-width="11" stroke-linecap="round">
+    <path d="M1518 72c-83 110-142 180-250 253-88 59-149 97-205 176"/>
+    <path d="M1454 168c-82-9-143-36-205-92m-10 112c-91-6-160-2-241 25m-4 35c-33-79-47-139-40-218m194 129c30-80 70-128 124-181"/>
+    <path d="M1377 247c-55 2-103 21-163 68m-8 29c-12-55-39-105-87-145"/>
+  </g>
+  <g fill="#EDB8C9" fill-opacity=".9">
+    <g transform="translate(1240 91)"><circle r="13"/><circle cx="18" cy="7" r="10"/><circle cx="-16" cy="12" r="11"/><circle cx="2" cy="23" r="10"/><circle cy="7" r="5" fill="#F3D6A9"/></g>
+    <g transform="translate(1291 182) scale(.8)"><circle r="13"/><circle cx="18" cy="7" r="10"/><circle cx="-16" cy="12" r="11"/><circle cx="2" cy="23" r="10"/><circle cy="7" r="5" fill="#F3D6A9"/></g>
+    <g transform="translate(1135 229) scale(.72)"><circle r="13"/><circle cx="18" cy="7" r="10"/><circle cx="-16" cy="12" r="11"/><circle cx="2" cy="23" r="10"/><circle cy="7" r="5" fill="#F3D6A9"/></g>
+    <g transform="translate(1400 112) scale(.7)"><circle r="13"/><circle cx="18" cy="7" r="10"/><circle cx="-16" cy="12" r="11"/><circle cx="2" cy="23" r="10"/><circle cy="7" r="5" fill="#F3D6A9"/></g>
+    <g transform="translate(1087 160) scale(.62)"><circle r="13"/><circle cx="18" cy="7" r="10"/><circle cx="-16" cy="12" r="11"/><circle cx="2" cy="23" r="10"/><circle cy="7" r="5" fill="#F3D6A9"/></g>
+    <g transform="translate(1350 276) scale(.62)"><circle r="13"/><circle cx="18" cy="7" r="10"/><circle cx="-16" cy="12" r="11"/><circle cx="2" cy="23" r="10"/><circle cy="7" r="5" fill="#F3D6A9"/></g>
+  </g>
+
+  <g transform="translate(-100 30) rotate(-17 1435 625)" stroke="#D8B88C" stroke-opacity=".15" fill="none">
+    <path stroke-width="18" stroke-linecap="round" d="M1272 874 1511 374"/>
+    <path stroke-width="8" d="m1302 809 166 79m-139-136 166 80m-138-138 166 80m-137-138 166 80m-137-138 166 80m-137-138 166 80"/>
+    <ellipse cx="1256" cy="882" rx="56" ry="81" stroke-width="13"/>
+    <ellipse cx="1518" cy="368" rx="43" ry="60" stroke-width="12"/>
+    <circle cx="1256" cy="882" r="21" fill="#D8B88C" fill-opacity=".12" stroke="none"/>
+  </g>
+</svg>

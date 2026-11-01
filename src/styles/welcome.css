@@ -10,6 +10,56 @@
   color: var(--color-ivory);
 }
 
+.welcome-sky-notes {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  color: #f3d9d4;
+  pointer-events: none;
+  text-shadow: 0 0 22px rgb(243 190 204 / 72%);
+}
+
+.welcome-sky-notes span {
+  position: absolute;
+  opacity: 0.58;
+  animation: note-drift 8s ease-in-out infinite alternate;
+}
+
+.welcome-sky-notes span:nth-child(1) {
+  top: 19%;
+  left: 16%;
+  font-size: clamp(1.2rem, 3vw, 2.4rem);
+}
+
+.welcome-sky-notes span:nth-child(2) {
+  top: 31%;
+  left: 30%;
+  font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+  animation-delay: -3s;
+}
+
+.welcome-sky-notes span:nth-child(3) {
+  top: 17%;
+  right: 29%;
+  font-size: clamp(1.2rem, 2.8vw, 2.1rem);
+  animation-delay: -5s;
+}
+
+.welcome-sky-notes span:nth-child(4) {
+  top: 39%;
+  right: 17%;
+  font-size: clamp(1rem, 2.5vw, 1.9rem);
+  animation-delay: -2s;
+}
+
+.welcome-sky-notes span:nth-child(5) {
+  top: 12%;
+  left: 48%;
+  font-size: clamp(0.9rem, 2vw, 1.5rem);
+  animation-delay: -6s;
+}
+
 .skip-link:focus {
   transform: translateY(0);
 }
@@ -22,6 +72,7 @@
   overflow: hidden;
   place-items: center;
   isolation: isolate;
+  --scene-progress: 0;
   background:
     radial-gradient(ellipse at 75% 20%, rgb(52 76 80 / 46%), transparent 48%),
     linear-gradient(155deg, #263c3a, #111722 78%);
@@ -43,9 +94,16 @@
 }
 
 .welcome-landscape--opening img {
-  object-position: center center;
-  animation: landscape-drift 42s ease-in-out infinite alternate;
+  object-position: center;
+  filter: blur(calc(var(--scene-progress) * 7px));
+  transform: translate3d(0, calc(var(--scene-progress) * -7vh), 0)
+    scale(calc(1.04 + var(--scene-progress) * 0.08));
+  transition: filter 120ms linear;
   will-change: transform;
+}
+
+.welcome-landscape--opening {
+  animation: landscape-drift 42s ease-in-out infinite alternate;
 }
 
 .welcome-screen__veil,
@@ -103,8 +161,8 @@
 }
 
 .blossom-field {
-  position: absolute;
-  z-index: 2;
+  position: fixed;
+  z-index: 4;
   inset: 0;
   display: block;
   pointer-events: none;
@@ -114,8 +172,7 @@
   position: relative;
   z-index: 3;
   width: 100%;
-  padding: 2rem var(--page-gutter) 5rem;
-  transform: translateY(-1.5vh);
+  padding: 2rem var(--page-gutter);
   text-align: center;
 }
 
@@ -126,11 +183,10 @@
 
 .welcome-brand__name {
   margin: 0;
-  padding-left: 0.17em;
   font-family: var(--font-editorial);
-  font-size: clamp(3.4rem, 9.2vw, 8rem);
+  font-size: clamp(3.4rem, 9vw, 8rem);
   font-weight: 500;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.12em;
   line-height: 1;
 }
 
@@ -181,8 +237,9 @@
 
 .welcome-transition {
   position: relative;
-  min-height: 82vh;
-  min-height: 82svh;
+  min-height: 100vh;
+  min-height: 100svh;
+  scroll-margin-top: -5rem;
   overflow: hidden;
   isolation: isolate;
   background:
@@ -191,8 +248,8 @@
 }
 
 .welcome-landscape--continuation img {
-  object-position: center 78%;
-  transform: scale(1.02);
+  object-position: center;
+  transform: scale(1.08);
 }
 
 .welcome-transition__veil {
@@ -258,11 +315,21 @@
 
 @keyframes landscape-drift {
   from {
-    transform: scale(1.04) translate3d(0, 0, 0);
+    transform: scale(1.03);
   }
 
   to {
-    transform: scale(1.09) translate3d(-0.5%, -0.4%, 0);
+    transform: scale(1.08) translate3d(-0.5%, -0.4%, 0);
+  }
+}
+
+@keyframes note-drift {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-8deg);
+  }
+
+  to {
+    transform: translate3d(12px, -18px, 0) rotate(8deg);
   }
 }
 
@@ -291,8 +358,7 @@
 
 @media (max-width: 767px) {
   .welcome-landscape--opening img {
-    object-position: center center;
-    animation-duration: 52s;
+    object-position: center;
   }
 
   .welcome-screen__veil {
@@ -315,12 +381,10 @@
   .welcome-brand-wrap {
     padding-right: 1rem;
     padding-left: 1rem;
-    transform: translateY(-2vh);
   }
 
   .welcome-brand__name {
-    padding-left: 0.12em;
-    font-size: clamp(3.2rem, 16vw, 5.2rem);
+    font-size: clamp(3rem, 15vw, 5.2rem);
     letter-spacing: 0.12em;
   }
 
@@ -340,18 +404,30 @@
     letter-spacing: 0.16em;
   }
 
-  .welcome-transition {
-    min-height: 72svh;
+  .welcome-sky-notes span:nth-child(2) {
+    top: 27%;
+    left: 15%;
   }
 
-  .welcome-landscape--continuation img {
-    object-position: center 70%;
+  .welcome-sky-notes span:nth-child(3) {
+    top: 23%;
+    right: 14%;
+  }
+
+  .welcome-sky-notes span:nth-child(4) {
+    top: 42%;
+    right: 9%;
+  }
+
+  .welcome-sky-notes span:nth-child(5) {
+    top: 14%;
+    left: 55%;
   }
 }
 
 @media (max-width: 374px) {
   .welcome-brand__name {
-    font-size: 3rem;
+    font-size: 2.8rem;
     letter-spacing: 0.1em;
   }
 
@@ -362,10 +438,6 @@
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  .welcome-landscape--opening img {
-    object-position: 70% center;
-  }
-
   .welcome-brand__name {
     font-size: clamp(5.8rem, 12vw, 7rem);
   }
@@ -373,8 +445,7 @@
 
 @media (orientation: landscape) and (max-height: 520px) {
   .welcome-brand-wrap {
-    padding-bottom: 4.25rem;
-    transform: translateY(-1vh) scale(0.78);
+    transform: scale(0.78);
   }
 
   .welcome-scroll {
@@ -384,7 +455,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .welcome-landscape--opening img,
+  .welcome-landscape--opening,
   .welcome-screen__light,
+  .welcome-sky-notes span,
   .welcome-scroll__arrow {
     animation: none;
     transform: none;

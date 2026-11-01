@@ -2,8 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import WelcomePage from './WelcomePage';
 
-vi.mock('./BlossomField', () => ({
-  BlossomField: () => <canvas data-testid="blossom-field" />,
+vi.mock('../../components/BlossomTransition', () => ({
+  BlossomTransition: () => <canvas data-testid="blossom-transition" />,
 }));
 
 describe('WelcomePage', () => {
@@ -17,6 +17,11 @@ describe('WelcomePage', () => {
     );
     expect(
       screen.getByText('Beyond What You Hear.', { exact: true }),
+    ).toBeInTheDocument();
+    expect(
+      screen
+        .getByLabelText('VEENA welcome')
+        .querySelector('.welcome-sky-notes'),
     ).toBeInTheDocument();
     expect(
       screen.queryByText(
@@ -37,6 +42,9 @@ describe('WelcomePage', () => {
     expect(
       screen.queryByRole('button', { name: /enter|discover/i }),
     ).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Continue exploring VEENA')).toHaveClass(
+      'welcome-transition',
+    );
   });
 
   it('falls back to the atmospheric color treatment if the landscape cannot load', () => {

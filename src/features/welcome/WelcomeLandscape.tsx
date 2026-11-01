@@ -13,8 +13,8 @@ export function WelcomeLandscape({
     <picture aria-hidden="true" className={className}>
       <source
         media="(max-width: 767px)"
-        srcSet="/assets/welcome/welcome-portrait.webp"
-        type="image/webp"
+        srcSet="/assets/welcome/veena-world-portrait.svg"
+        type="image/svg+xml"
       />
       <img
         alt=""
@@ -22,7 +22,7 @@ export function WelcomeLandscape({
         fetchPriority={loading === 'eager' ? 'high' : 'auto'}
         loading={loading}
         onError={onError}
-        src="/assets/welcome/welcome-landscape.webp"
+        src="/assets/welcome/veena-world.svg"
       />
     </picture>
   );
