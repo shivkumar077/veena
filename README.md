@@ -4,7 +4,7 @@
 
 VEENA is a premium, immersive visual music experience. Its ambition is to give every song a world of its own: adaptive environments, expressive typography, animated compositions, and lyrics that move with the music. It is being built as an artistic listening space, not a conventional music-player dashboard.
 
-> **Milestone 1 — Foundation and architecture.** This repository establishes the frontend foundation, visual language, domain contracts, and quality checks. Playback, lyrics services, authentication, and provider integrations are planned—not implemented.
+> **Milestones 1–2 — Foundation and cinematic welcome.** The repository establishes the frontend foundation, domain contracts, quality checks, and a responsive, animated welcome landscape. Playback, lyrics services, authentication, and provider integrations are planned—not implemented.
 
 ## Vision
 
@@ -29,8 +29,8 @@ src/
   app/                 Application entry, error boundary, loading states
   components/          Shared interface components
   features/
-    welcome/           VEENA concept and first-run surface
-    visualization/     Lazy-loaded Three.js scene
+    welcome/           Landscape, centered brand, petals, and scroll transition
+    visualization/     Future track-responsive visual experience
     playback/          Future playback experience
     lyrics/            Future synchronized-lyrics experience
     authentication/    Future authentication experience
@@ -50,7 +50,9 @@ src/
 
 Engine interfaces describe what the application needs; provider interfaces describe what an external music source may offer. Implementations can be added later without coupling the UI to Supabase, LRCLIB, or a specific music provider.
 
-The Three.js scene is code-split behind a React lazy boundary and separated from the initial application bundle. In the current production build, its Three.js vendor chunk is about 719 KB minified (187 KB gzip). Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, reduced-motion handling, loading feedback, and an application error boundary are part of the baseline.
+The opening landscape is locally hosted, preloaded, and art-directed separately for portrait and landscape screens. A small Canvas 2D layer animates a limited number of petals; reduced-motion users get a static landscape and no animated petals. A scroll link moves into a minimal visual continuation rather than a premature product flow. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
+
+The welcome image is adapted from a Wikimedia Commons photograph. Its creator, source, CC BY-SA 4.0 license, and crop/conversion notes are recorded in [ASSET-CREDITS.md](./ASSET-CREDITS.md).
 
 ## Technology
 
@@ -88,11 +90,12 @@ Copy `.env.example` to `.env.local` when local public configuration is needed. V
 
 ## Roadmap
 
-1. **Foundation and architecture** — frontend scaffold, design tokens, domain and engine contracts, accessible concept surface, and quality tooling.
-2. **Core listening experience** — playback state and controls, track selection, and provider integration boundaries.
-3. **Lyrics and synchronization** — lyrics retrieval, timed-line contracts in use, and accessible lyric presentation.
-4. **Visual composition** — audio-informed compositions and track-responsive environments.
-5. **Account and persistence** — authentication, preferences, and saved listening context.
-6. **Hardening and release** — device/browser validation, performance, and production operations.
+1. **Foundation and architecture** — complete: frontend scaffold, design tokens, domain and engine contracts, and quality tooling.
+2. **Cinematic welcome and branding** — complete: responsive local landscape, centered bilingual brand, petal motion, reduced-motion behavior, and scroll transition.
+3. **Core listening experience** — playback state and controls, track selection, and provider integration boundaries.
+4. **Lyrics and synchronization** — lyrics retrieval, timed-line contracts in use, and accessible lyric presentation.
+5. **Visual composition** — audio-informed compositions and track-responsive environments.
+6. **Account and persistence** — authentication, preferences, and saved listening context.
+7. **Hardening and release** — device/browser validation, performance, and production operations.
 
 Roadmap stages are plans; completion should be reported only after implementation and verification.

@@ -1,10 +1,15 @@
 export function BrandMark() {
   return (
-    <a className="brand-mark" href="#top" aria-label="VEENA home">
-      <span className="brand-mark__name">VEENA</span>
-      <span className="brand-mark__devanagari" lang="hi">
+    <div
+      className="welcome-brand"
+      role="group"
+      aria-label="VEENA — Beyond What You Hear"
+    >
+      <h1 className="welcome-brand__name">VEENA</h1>
+      <p className="welcome-brand__devanagari" lang="hi">
         वीणा
-      </span>
-    </a>
+      </p>
+      <p className="welcome-brand__tagline">Beyond What You Hear.</p>
+    </div>
   );
 }

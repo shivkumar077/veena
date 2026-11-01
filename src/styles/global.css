@@ -37,8 +37,7 @@ a {
   font-family: var(--font-body);
 }
 
-button,
-a {
+button {
   color: inherit;
 }
 
