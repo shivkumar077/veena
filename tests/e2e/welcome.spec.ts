@@ -314,6 +314,46 @@ test('a fast gesture shows the petal wave before the destination moves into view
   await expect(page).toHaveURL(/#explore$/);
 });
 
+test('the explore source choices arrive with a prominent staggered reveal over a softly blurred wallpaper', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.mouse.wheel(0, 80);
+
+  const reveal = await page.evaluate(() => ({
+    transitionCount: document
+      .querySelector('#main')
+      ?.getAttribute('data-transition-count'),
+    entering: document
+      .querySelector('[data-testid="workspace"]')
+      ?.getAttribute('data-transition-entering'),
+    headingAnimation: getComputedStyle(
+      document.querySelector('.workspace-panel__intro')!,
+    ).animationName,
+    appleAnimation: getComputedStyle(
+      document.querySelector('[data-testid="source-choice-apple-music"]')!,
+    ).animationName,
+    youtubeDelay: getComputedStyle(
+      document.querySelector('[data-testid="source-choice-youtube-music"]')!,
+    ).animationDelay,
+    localDelay: getComputedStyle(
+      document.querySelector('[data-testid="source-choice-local-audio"]')!,
+    ).animationDelay,
+    wallpaperFilter: getComputedStyle(
+      document.querySelector('.welcome-landscape--continuation img')!,
+    ).filter,
+  }));
+  expect(reveal).toEqual({
+    transitionCount: '1',
+    entering: 'true',
+    headingAnimation: 'source-heading-arrive',
+    appleAnimation: 'source-choice-arrive',
+    youtubeDelay: '0.54s',
+    localDelay: '0.76s',
+    wallpaperFilter: 'blur(1.4px)',
+  });
+});
+
 test('repeated scroll-indicator clicks do not interrupt the active transition', async ({
   page,
 }) => {
@@ -403,6 +443,14 @@ test('reduced-motion navigation reaches the destination immediately', async ({
   await expect(main).toHaveAttribute('data-navigation-state', 'idle');
   await expect(page).toHaveURL(/#explore$/);
   await expect(page.getByTestId('blossom-transition')).toHaveCount(0);
+  await expect(page.getByTestId('workspace')).toHaveAttribute(
+    'data-transition-entering',
+    'false',
+  );
+  await expect(page.getByTestId('source-choice-apple-music')).toHaveCSS(
+    'animation-name',
+    'none',
+  );
 });
 
 test('PageDown and PageUp navigate between sections from the keyboard', async ({
@@ -460,7 +508,7 @@ test('uses the atmospheric fallback if the illustrated scene fails', async ({
   await expect(page.getByRole('heading', { name: 'VEENA' })).toBeVisible();
 });
 
-test('enters the workspace through the blossom transition and continues as a guest', async ({
+test('enters the source-selection home through the blossom transition', async ({
   page,
 }) => {
   await page.goto('/');
@@ -472,30 +520,18 @@ test('enters the workspace through the blossom transition and continues as a gue
   });
   await expect(page).toHaveURL(/#explore$/);
   await expect(
-    page.getByRole('region', { name: 'VEENA listening workspace' }),
+    page.getByRole('region', { name: 'VEENA source selection' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Choose how you listen' }),
+    page.getByRole('heading', { name: 'Choose your source' }),
   ).toBeVisible();
+  await expect(page.getByTestId(/^source-choice-/)).toHaveCount(3);
+  await expect(page.getByRole('navigation')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Listening' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Lyrics' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /welcome/i })).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Continue as guest' }).click();
-  await expect(page.getByRole('status')).toHaveText('Guest session');
-  await expect(
-    page.getByRole('heading', { name: 'A place for the next song.' }),
-  ).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Listening' })).toHaveAttribute(
-    'aria-current',
-    'page',
-  );
-
-  await page.getByRole('button', { name: 'Lyrics', exact: true }).click();
-  await expect(page.getByTestId('lyrics-placeholder')).toBeVisible();
-  await page.getByRole('button', { name: 'Sources', exact: true }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Choose how you listen' }),
-  ).toBeVisible();
-
-  await page.getByRole('button', { name: 'Welcome' }).click();
+  await page.mouse.wheel(0, -80);
   await expect(main).toHaveAttribute('data-transition-count', '2');
   await expect(main).toHaveAttribute('data-navigation-direction', 'backward');
   await expect(main).toHaveAttribute('data-navigation-state', 'idle', {
@@ -526,11 +562,11 @@ test('the keyboard-accessible skip link enters the workspace through the blossom
     { timeout: 5000 },
   );
   await expect(
-    page.getByRole('region', { name: 'VEENA listening workspace' }),
+    page.getByRole('region', { name: 'VEENA source selection' }),
   ).toBeVisible();
 });
 
-test('provider source selection never represents an unimplemented connection as active', async ({
+test('the VEENA wordmark returns to the source-selection home', async ({
   page,
 }) => {
   await page.goto('/');
@@ -541,29 +577,62 @@ test('provider source selection never represents an unimplemented connection as 
     { timeout: 5000 },
   );
 
-  await page.getByRole('button', { name: 'Select Apple Music' }).click();
-  await expect(
-    page.getByRole('button', { name: 'Selected: Apple Music' }),
-  ).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByTestId('source-card-apple-music')).toContainText(
-    'Not connected',
+  await page.getByTestId('source-choice-apple-music').click();
+  await page
+    .getByRole('button', { name: 'VEENA source selection home' })
+    .click();
+  await expect(page.getByTestId('source-choice-apple-music')).toHaveAttribute(
+    'aria-pressed',
+    'false',
   );
-  await expect(page.getByRole('status')).toContainText(
-    'no access was requested',
+  await expect(
+    page.getByRole('heading', { name: 'Choose your source' }),
+  ).toBeFocused();
+});
+
+test('source selection is exclusive and never represents a provider as connected', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Scroll down to explore' }).click();
+  await expect(page.locator('#main')).toHaveAttribute(
+    'data-navigation-state',
+    'idle',
+    { timeout: 5000 },
   );
 
-  await page.getByRole('button', { name: 'Select YouTube Music' }).click();
-  await expect(page.getByTestId('source-card-youtube-music')).toContainText(
-    'Not connected',
+  await page.getByTestId('source-choice-apple-music').click();
+  await expect(page.getByRole('status')).toHaveText(
+    'Apple Music selected · Not connected.',
   );
+  await page.getByTestId('source-choice-youtube-music').click();
+  await expect(
+    page.getByText(
+      'Clear your Apple Music selection before switching sources.',
+      { exact: true },
+    ),
+  ).toHaveAttribute('role', 'status');
+  await expect(page.getByTestId('source-choice-apple-music')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.getByTestId('source-choice-youtube-music')).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+  await page.getByRole('button', { name: 'Clear selection' }).click();
+  await page.getByTestId('source-choice-youtube-music').click();
+  await expect(page.getByTestId('source-choice-youtube-music')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.getByTestId(/^source-choice-/)).toHaveCount(3);
   await expect(
     page.locator('input[type="email"], input[type="password"]'),
   ).toHaveCount(0);
 });
 
-test('local audio selection stays on-device and does not start playback', async ({
-  page,
-}) => {
+test('local audio remains on-device and is not played', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'Scroll down to explore' }).click();
   await expect(page.locator('#main')).toHaveAttribute(
@@ -572,22 +641,23 @@ test('local audio selection stays on-device and does not start playback', async 
     { timeout: 5000 },
   );
 
-  await page.getByLabel('Choose a local audio file').setInputFiles({
+  await page.getByTestId('local-audio-input').setInputFiles({
     name: 'quiet-morning.mp3',
     mimeType: 'audio/mpeg',
     buffer: Buffer.from('local fixture only'),
   });
 
-  await expect(
-    page.getByTestId('source-card-local-audio').getByRole('status'),
-  ).toContainText('quiet-morning.mp3');
-  await expect(page.locator('.workspace-notice')).toContainText(
-    'will not be uploaded or played',
+  await expect(page.getByRole('status')).toHaveText(
+    'quiet-morning.mp3 stays on this device.',
+  );
+  await expect(page.getByTestId('source-choice-local-audio')).toHaveAttribute(
+    'aria-pressed',
+    'true',
   );
   await expect(page.locator('audio, video')).toHaveCount(0);
 });
 
-test('workspace remains usable without horizontal overflow at supported widths', async ({
+test('source selection remains balanced without horizontal overflow at supported widths', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 900 });
@@ -605,7 +675,6 @@ test('workspace remains usable without horizontal overflow at supported widths',
       const frame = document.querySelector('.workspace-frame');
       const bounds = frame?.getBoundingClientRect();
       return {
-        viewportWidth: window.innerWidth,
         documentWidth: document.documentElement.scrollWidth,
         frameLeft: bounds?.left ?? 0,
         frameRight: bounds?.right ?? 0,
@@ -615,26 +684,48 @@ test('workspace remains usable without horizontal overflow at supported widths',
     expect(dimensions.documentWidth).toBeLessThanOrEqual(width);
     expect(dimensions.frameLeft).toBeGreaterThanOrEqual(0);
     expect(dimensions.frameRight).toBeLessThanOrEqual(width);
-    await expect(
-      page.getByRole('navigation', { name: 'Workspace areas' }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: 'Continue as guest' }),
-    ).toBeVisible();
+    await expect(page.getByTestId('source-choice-apple-music')).toBeVisible();
+    await expect(page.getByTestId('source-choice-youtube-music')).toBeVisible();
+    await expect(page.getByTestId('source-choice-local-audio')).toBeVisible();
+    await expect(page.getByTestId(/^source-choice-/)).toHaveCount(3);
   }
 
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const sourcePresentation = await page.evaluate(() => {
+    const panel = document.querySelector('.workspace-panel');
+    const choice = document.querySelector('.workspace-source-choice');
+    const icon = document.querySelector('.workspace-source-choice__icon');
+    if (!panel || !choice || !icon) {
+      throw new Error('The source selection composition is incomplete.');
+    }
+
+    return {
+      panelBackground: getComputedStyle(panel).backgroundColor,
+      panelShadow: getComputedStyle(panel).boxShadow,
+      choiceBackground: getComputedStyle(choice).backgroundColor,
+      choiceBorder: getComputedStyle(choice).borderWidth,
+      iconBackground: getComputedStyle(icon).backgroundColor,
+      iconRadius: getComputedStyle(icon).borderRadius,
+    };
+  });
+  expect(sourcePresentation.panelBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(sourcePresentation.panelShadow).toBe('none');
+  expect(sourcePresentation.choiceBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(sourcePresentation.choiceBorder).toBe('0px');
+  expect(sourcePresentation.iconBackground).toBe('rgba(0, 0, 0, 0)');
+  expect(sourcePresentation.iconRadius).toBe('0px');
+
   await page.setViewportSize({ width: 375, height: 812 });
-  const guestAction = await page
-    .getByRole('button', { name: 'Continue as guest' })
-    .boundingBox();
-  expect(guestAction).not.toBeNull();
-  expect(guestAction!.y + guestAction!.height).toBeLessThan(812);
+  const choices = page.getByTestId(/^source-choice-/);
+  for (let index = 0; index < 3; index += 1) {
+    const bounds = await choices.nth(index).boundingBox();
+    expect(bounds).not.toBeNull();
+    expect(bounds!.height).toBeGreaterThanOrEqual(44);
+    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(375);
+  }
 });
 
-test('keyboard scrolling inside the workspace does not trigger section navigation', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+test('keyboard users can focus and select source choices', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'Scroll down to explore' }).click();
   await expect(page.locator('#main')).toHaveAttribute(
@@ -643,43 +734,9 @@ test('keyboard scrolling inside the workspace does not trigger section navigatio
     { timeout: 5000 },
   );
 
-  const workspaceContent = page.getByRole('region', {
-    name: 'Workspace content',
-  });
-  const firstSource = page.getByTestId('source-card-apple-music');
-  const sourceBounds = await firstSource.boundingBox();
-  if (!sourceBounds) {
-    throw new Error('The first source card must be visible in the workspace.');
-  }
-  await page.mouse.move(
-    sourceBounds.x + sourceBounds.width / 2,
-    sourceBounds.y + sourceBounds.height / 2,
-  );
-  await page.mouse.wheel(0, 160);
-  await expect
-    .poll(() => workspaceContent.evaluate((element) => element.scrollTop))
-    .toBeGreaterThan(0);
-  await expect(page.locator('#main')).toHaveAttribute(
-    'data-transition-count',
-    '1',
-  );
-
-  await workspaceContent.evaluate((element) => {
-    element.scrollTop = element.scrollHeight;
-  });
-  const before = await workspaceContent.evaluate(
-    (element) => element.scrollTop,
-  );
-  expect(before).toBeGreaterThan(0);
-  await workspaceContent.focus();
-  await page.keyboard.press('PageUp');
-
-  await expect
-    .poll(() => workspaceContent.evaluate((element) => element.scrollTop))
-    .toBeLessThan(before);
-  await expect(page.locator('#main')).toHaveAttribute(
-    'data-transition-count',
-    '1',
-  );
-  await expect(page).toHaveURL(/#explore$/);
+  const appleMusic = page.getByTestId('source-choice-apple-music');
+  await appleMusic.focus();
+  await expect(appleMusic).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(appleMusic).toHaveAttribute('aria-pressed', 'true');
 });

@@ -124,7 +124,13 @@ export default function WelcomePage() {
             onError={() => setLandscapeUnavailable(true)}
           />
           <div className="welcome-transition__veil" aria-hidden="true" />
-          <WorkspacePage onReturnToWelcome={() => navigate('backward')} />
+          <WorkspacePage
+            isEntering={
+              navigation.direction === 'forward' &&
+              navigation.destinationSection === 'explore' &&
+              navigation.state !== 'idle'
+            }
+          />
         </section>
         <BlossomTransition
           transitionRef={transitionRef}

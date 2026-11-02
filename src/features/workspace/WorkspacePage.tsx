@@ -1,172 +1,110 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type {
-  GuestSession,
+  MusicSourceId,
   MusicSourceSelectionState,
   ProviderMusicSourceId,
-  WorkspaceArea,
-  WorkspaceNavigationState,
 } from '../../types/workspace';
+import { clearMusicSourceSelection, selectMusicSource } from './musicSources';
 import { MusicSourceSelection } from './MusicSourceSelection';
-import { WorkspaceNavigation } from './WorkspaceNavigation';
+
+const initialSelection: MusicSourceSelectionState = {
+  selectedSource: null,
+  connectedProviderId: null,
+  localFileName: null,
+};
+
+function sourceName(sourceId: MusicSourceId) {
+  return sourceId === 'apple-music'
+    ? 'Apple Music'
+    : sourceId === 'youtube-music'
+      ? 'YouTube Music'
+      : 'Local Audio';
+}
+
+function blockedNotice(
+  block:
+    | { kind: 'clear-selection'; sourceId: MusicSourceId }
+    | { kind: 'disconnect-provider'; sourceId: ProviderMusicSourceId },
+) {
+  const name = sourceName(block.sourceId);
+  return block.kind === 'disconnect-provider'
+    ? `Disconnect ${name} before switching sources.`
+    : `Clear your ${name} selection before switching sources.`;
+}
 
 interface WorkspacePageProps {
-  onReturnToWelcome: () => void;
+  isEntering: boolean;
 }
 
-function ListeningArea({
-  onChooseSource,
-  onOpenLyrics,
-}: {
-  onChooseSource: () => void;
-  onOpenLyrics: () => void;
-}) {
-  return (
-    <section aria-labelledby="listening-heading" className="workspace-area">
-      <header className="workspace-area__heading">
-        <p className="workspace-eyebrow">YOUR LISTENING SPACE</p>
-        <h2 id="listening-heading">A place for the next song.</h2>
-        <p>Nothing is playing. Choose a source whenever you are ready.</p>
-      </header>
-
-      <div
-        className="workspace-listening"
-        data-testid="current-listening"
-        role="region"
-        aria-label="Current listening area"
-      >
-        <span aria-hidden="true" className="workspace-listening__symbol">
-          ♪
-        </span>
-        <p className="workspace-eyebrow">NOW LISTENING</p>
-        <h3>No track selected</h3>
-        <p>
-          VEENA is ready when you are. Playback will be introduced in a later
-          milestone.
-        </p>
-        <button
-          className="workspace-button workspace-button--primary"
-          onClick={onChooseSource}
-          type="button"
-        >
-          Choose a music source
-        </button>
-      </div>
-
-      <div className="workspace-support-grid">
-        <article className="workspace-support-card">
-          <p className="workspace-eyebrow">LYRICS</p>
-          <h3>Words, in their own time.</h3>
-          <p>
-            Lyrics will appear here when the lyrics experience is available.
-          </p>
-          <button
-            className="workspace-text-button"
-            onClick={onOpenLyrics}
-            type="button"
-          >
-            Open lyrics area
-          </button>
-        </article>
-        <article className="workspace-support-card workspace-support-card--quiet">
-          <p className="workspace-eyebrow">GUEST SESSION</p>
-          <h3>Listening without an account</h3>
-          <p>
-            Your visit does not require a VEENA account or personal details.
-          </p>
-        </article>
-      </div>
-    </section>
-  );
-}
-
-function LyricsArea({ onChooseSource }: { onChooseSource: () => void }) {
-  return (
-    <section aria-labelledby="lyrics-heading" className="workspace-area">
-      <header className="workspace-area__heading">
-        <p className="workspace-eyebrow">LYRICS</p>
-        <h2 id="lyrics-heading">Let the words find their place.</h2>
-        <p>A calm space for lyrics, ready for a future listening session.</p>
-      </header>
-      <div
-        aria-label="Lyrics area placeholder"
-        className="workspace-lyrics"
-        data-testid="lyrics-placeholder"
-      >
-        <span aria-hidden="true">“</span>
-        <p>No track is selected yet.</p>
-        <p>
-          Lyrics retrieval and synchronization are planned for a later
-          milestone.
-        </p>
-        <button
-          className="workspace-button workspace-button--secondary"
-          onClick={onChooseSource}
-          type="button"
-        >
-          Return to sources
-        </button>
-      </div>
-    </section>
-  );
-}
-
-export function WorkspacePage({ onReturnToWelcome }: WorkspacePageProps) {
-  const [navigation, setNavigation] = useState<WorkspaceNavigationState>({
-    activeArea: 'sources',
-  });
-  const [guestSession, setGuestSession] = useState<GuestSession | null>(null);
-  const [selection, setSelection] = useState<MusicSourceSelectionState>({
-    preferredSource: null,
-    localFileName: null,
-  });
+export function WorkspacePage({ isEntering }: WorkspacePageProps) {
+  const [selection, setSelection] =
+    useState<MusicSourceSelectionState>(initialSelection);
   const [notice, setNotice] = useState<string | null>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
-  const enterArea = (area: WorkspaceArea) => {
-    if (area !== 'sources') {
-      setGuestSession({ mode: 'guest' });
+  const handleSelectSource = (sourceId: MusicSourceId) => {
+    const result = selectMusicSource(selection, sourceId);
+    if (result.blockedBy) {
+      setNotice(blockedNotice(result.blockedBy));
+      return;
     }
-    setNavigation({ activeArea: area });
+
+    if (sourceId !== 'local-audio') {
+      setSelection(result.state);
+      setNotice(null);
+    }
+  };
+
+  const handleChooseLocalFile = (file: File) => {
+    const result = selectMusicSource(selection, 'local-audio', file.name);
+    if (result.blockedBy) {
+      setNotice(blockedNotice(result.blockedBy));
+      return;
+    }
+
+    setSelection(result.state);
     setNotice(null);
   };
 
-  const selectProvider = (sourceId: ProviderMusicSourceId) => {
-    const source = sourceId === 'apple-music' ? 'Apple Music' : 'YouTube Music';
-    setSelection({
-      preferredSource: sourceId,
-      localFileName: null,
-    });
-    setNotice(
-      `${source} is selected as a preference, but is not connected. Provider authorization is not available yet; no access was requested.`,
-    );
-  };
+  const handleClearSelection = () => {
+    const result = clearMusicSourceSelection(selection);
+    if (result.blockedBy) {
+      setNotice(blockedNotice(result.blockedBy));
+      return;
+    }
 
-  const selectLocalFile = (file: File) => {
-    setSelection({
-      preferredSource: 'local-audio',
-      localFileName: file.name,
-    });
-    setNotice(
-      'This file stays on your device. It will not be uploaded or played in this milestone.',
-    );
-  };
-
-  const continueAsGuest = () => {
-    setGuestSession({ mode: 'guest' });
-    setNavigation({ activeArea: 'listen' });
+    setSelection(result.state);
     setNotice(null);
   };
 
-  const openSources = () => enterArea('sources');
+  const handleHome = () => {
+    handleClearSelection();
+    headingRef.current?.focus({ preventScroll: true });
+    const panel = document.querySelector<HTMLElement>('.workspace-panel');
+    if (panel && typeof panel.scrollIntoView === 'function') {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   return (
     <section
-      aria-label="VEENA listening workspace"
-      className="workspace-page"
+      aria-label="VEENA source selection"
+      className={
+        isEntering
+          ? 'workspace-page workspace-page--entering'
+          : 'workspace-page'
+      }
+      data-transition-entering={isEntering}
       data-testid="workspace"
     >
       <div className="workspace-frame">
         <header className="workspace-header">
-          <div aria-label="VEENA" className="workspace-brand">
+          <button
+            aria-label="VEENA source selection home"
+            className="workspace-brand"
+            onClick={handleHome}
+            type="button"
+          >
             <span className="workspace-brand__name">VEENA</span>
             <span className="workspace-brand__devanagari" lang="hi">
               वीणा
@@ -174,53 +112,28 @@ export function WorkspacePage({ onReturnToWelcome }: WorkspacePageProps) {
             <span className="workspace-brand__tagline">
               Beyond What You Hear.
             </span>
-          </div>
-          <div className="workspace-header__actions">
-            {guestSession && (
-              <p className="workspace-session" role="status">
-                Guest session
-              </p>
-            )}
-            <button
-              className="workspace-back"
-              onClick={onReturnToWelcome}
-              type="button"
-            >
-              <span aria-hidden="true">←</span> Welcome
-            </button>
-          </div>
+          </button>
         </header>
 
-        <WorkspaceNavigation
-          activeArea={navigation.activeArea}
-          onNavigate={enterArea}
-        />
+        <div className="workspace-main">
+          <div className="workspace-panel">
+            <div className="workspace-panel__intro">
+              <p className="workspace-eyebrow">VEENA · LISTENING SOURCES</p>
+              <h1 id="sources-heading" ref={headingRef} tabIndex={-1}>
+                Choose your source
+              </h1>
+              <span aria-hidden="true" className="workspace-panel__rule" />
+            </div>
 
-        <div
-          aria-label="Workspace content"
-          className="workspace-main"
-          id="workspace-main"
-          role="region"
-          tabIndex={-1}
-        >
-          {navigation.activeArea === 'sources' && (
             <MusicSourceSelection
-              selection={selection}
               notice={notice}
-              onContinueAsGuest={continueAsGuest}
-              onSelectLocalFile={selectLocalFile}
-              onSelectProvider={selectProvider}
+              onBlocked={setNotice}
+              onChooseLocalFile={handleChooseLocalFile}
+              onClearSelection={handleClearSelection}
+              onSelectSource={handleSelectSource}
+              selection={selection}
             />
-          )}
-          {navigation.activeArea === 'listen' && (
-            <ListeningArea
-              onChooseSource={openSources}
-              onOpenLyrics={() => enterArea('lyrics')}
-            />
-          )}
-          {navigation.activeArea === 'lyrics' && (
-            <LyricsArea onChooseSource={openSources} />
-          )}
+          </div>
         </div>
       </div>
     </section>

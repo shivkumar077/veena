@@ -44,7 +44,7 @@ describe('WelcomePage', () => {
       screen.getByRole('region', { name: 'Continue exploring VEENA' }),
     ).toHaveAttribute('id', 'explore');
     expect(
-      screen.getByRole('region', { name: 'VEENA listening workspace' }),
+      screen.getByRole('region', { name: 'VEENA source selection' }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /enter|discover/i }),

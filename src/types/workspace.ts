@@ -17,18 +17,9 @@ export interface MusicSourceOption {
 }
 
 export interface MusicSourceSelectionState {
-  preferredSource: MusicSourceId | null;
+  selectedSource: MusicSourceId | null;
+  connectedProviderId: ProviderMusicSourceId | null;
   localFileName: string | null;
-}
-
-export interface GuestSession {
-  readonly mode: 'guest';
-}
-
-export type WorkspaceArea = 'sources' | 'listen' | 'lyrics';
-
-export interface WorkspaceNavigationState {
-  activeArea: WorkspaceArea;
 }
 
 export interface MusicProviderAuthorizationAdapter {

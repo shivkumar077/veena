@@ -17,7 +17,6 @@ export type {
   VisualPalette,
 } from './visual';
 export type {
-  GuestSession,
   LocalMusicSourceId,
   MusicProviderAuthorizationAdapter,
   MusicSourceAvailability,
@@ -26,6 +25,4 @@ export type {
   MusicSourceOption,
   MusicSourceSelectionState,
   ProviderMusicSourceId,
-  WorkspaceArea,
-  WorkspaceNavigationState,
 } from './workspace';

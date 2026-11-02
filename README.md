@@ -31,7 +31,7 @@ src/
   components/          Shared interface components
   features/
     welcome/           Landscape, centered brand, petals, and scroll transition
-    workspace/         Guest-first source selection and listening/lyrics areas
+    workspace/         Responsive, exclusive music-source selection
     visualization/     Future track-responsive visual experience
     playback/          Future playback experience
     lyrics/            Future synchronized-lyrics experience
@@ -51,7 +51,7 @@ src/
 
 Engine interfaces describe what the application needs; provider interfaces describe what an external music source may offer. Implementations can be added later without coupling the UI to Supabase, LRCLIB, or a specific music provider.
 
-The opening scene is an original, locally hosted vector illustration with separate art direction for portrait and landscape screens. Animated musical notes, ambient lighting, and drifting blossoms bring the scene to life; direction-aware navigation carries visitors into the listening workspace. The workspace offers Apple Music, YouTube Music, and local audio as source choices, plus a guest path. Provider choices are not connected, local files are not uploaded or played, and no VEENA account or provider authorization is requested. Listening and lyrics areas are structural placeholders. Reduced-motion users get immediate section navigation and no animated petals. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
+The opening scene is an original, locally hosted vector illustration with separate art direction for portrait and landscape screens. Animated musical notes, ambient lighting, and drifting blossoms bring the scene to life; direction-aware navigation carries visitors to a focused source-selection home. The workspace presents Apple Music, YouTube Music, and local audio as its only choices. Provider choices remain unconnected, local files stay on-device and are not played, and no VEENA account or provider authorization is requested. Source selection is exclusive: a visitor clears a current selection before choosing another, and a connected provider must be disconnected before switching. Reduced-motion users get immediate section navigation and no animated petals. Shared design tokens define palette, type, spacing, motion, and layout; Tailwind breakpoints cover 320, 375, 430, 768, 1024, 1440, and 1920 pixels. Native semantic HTML, visible keyboard focus, a skip link, image fallback behavior, reduced-motion handling, and an application error boundary are part of the baseline. Three.js and React Three Fiber remain installed for the planned visual-composition experience; they are not used by the welcome page.
 
 VEENA does not use VEENA identity accounts. A future music provider may separately request its own authorization to enable provider-specific features; that authorization is not VEENA registration.
 
@@ -93,7 +93,7 @@ Copy `.env.example` to `.env.local` when local public configuration is needed. V
 
 1. **Foundation and architecture** — complete: frontend scaffold, design tokens, domain and engine contracts, and quality tooling.
 2. **Cinematic welcome and branding** — complete: responsive local landscape, centered bilingual brand, petal motion, reduced-motion behavior, and scroll transition.
-3. **Responsive listening workspace** — complete: guest-first shell, honest source-selection states, local-file entry point, and listening/lyrics placeholders. Actual playback and provider authorization are not implemented.
+3. **Responsive listening workspace** — complete: a source-selection-only home, exclusive source state, and an on-device local-file entry point. Actual playback and provider authorization are not implemented.
 4. **Lyrics and synchronization** — lyrics retrieval, timed-line contracts in use, and accessible lyric presentation.
 5. **Visual composition** — audio-informed compositions and track-responsive environments.
 6. **Privacy-conscious preferences** — optional local preferences only where useful; no VEENA account or profile.
